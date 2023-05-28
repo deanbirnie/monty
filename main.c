@@ -44,12 +44,12 @@ int main(int argc, char *argv[])
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
-		return EXIT_FAILURE;
+		return (EXIT_FAILURE);
 	}
 
 	const char *filename = argv[1];
 
 	parse_file(filename);
 
-	return EXIT_SUCCESS;
+	return (EXIT_SUCCESS);
 }

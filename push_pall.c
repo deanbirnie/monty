@@ -19,6 +19,7 @@ void opcode_push(stack_t **stack, unsigned int line_number)
 	int value = atoi(argument);
 
 	stack_t *new_node = malloc(sizeof(stack_t));
+
 	if (new_node == NULL)
 	{
 		fprintf(stderr, "Error: malloc failed\n");
