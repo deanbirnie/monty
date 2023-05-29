@@ -8,7 +8,11 @@
  */
 void opcode_push(stack_t **stack, unsigned int line_number)
 {
-	char *argument = strtok(NULL, " \t\n");
+	char *argument;
+	int value;
+	stack_t *new_node;
+
+	argument = strtok(NULL, " \t\n");
 
 	if (argument == NULL)
 	{
@@ -16,9 +20,9 @@ void opcode_push(stack_t **stack, unsigned int line_number)
 		exit(EXIT_FAILURE);
 	}
 
-	int value = atoi(argument);
+	value = atoi(argument);
 
-	stack_t *new_node = malloc(sizeof(stack_t));
+	new_node = malloc(sizeof(stack_t));
 
 	if (new_node == NULL)
 	{
@@ -44,7 +48,8 @@ void opcode_push(stack_t **stack, unsigned int line_number)
  * @stack: double pointer to the stack
  * @line_number: line number of the opcode being executed
  */
-void opcode_pall(stack_t **stack, unsigned int line_number)
+void opcode_pall(stack_t **stack, unsigned int line_number
+		 __attribute__((unused)))
 {
 	stack_t *current = *stack;
 

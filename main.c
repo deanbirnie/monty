@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include "monty.h"
 
 /**
@@ -8,26 +9,61 @@
 void parse_file(const char *filename)
 {
 	FILE *file = fopen(filename, "r");
-	char *line = NULL;
-	size_t len = 0;
-	ssize_t read;
-	unsigned int line_number = 1;
 
-	if (!file)
+	if (file == NULL)
 	{
 		fprintf(stderr, "Error: Can't open file %s\n", filename);
 		exit(EXIT_FAILURE);
 	}
 
+	char *line;
+	size_t len;
+	ssize_t read;
+	int i;
+	char *opcode, *argument;
+
+	line = NULL;
+	len = 0;
+
 	while ((read = getline(&line, &len, file)) != -1)
 	{
+		line_number++;
+
 		if (line[read - 1] == '\n')
 			line[read - 1] = '\0';
 
-		line_number++;
+		opcode = strtok(line, " \t\n");
+		argument = strtok(NULL, " \t\n");
+
+		if (opcode == NULL || opcode[0] == '#')
+			continue;
+
+		void (*op_func)(stack_t **, unsigned int) = NULL;
+
+		for (i = 0; i < NUM_OPCODES; i++)
+		{
+			if (strcmp(opcode, opcodes[i].opcode) == 0)
+			{
+				op_func = opcodes[i].f;
+				break;
+			}
+		}
+
+		if (op_func == NULL)
+		{
+			fprintf(stderr, "L%d: unknown instruction %s\n",
+				line_number, opcode);
+			free(line);
+			free_stack(stack);
+			fclose(file);
+			exit(EXIT_FAILURE);
+		}
+
+		op_func(&stack, line_number);
 	}
 
 	free(line);
+	free_stack(stack);
 	fclose(file);
 }
 
@@ -41,13 +77,15 @@ void parse_file(const char *filename)
  */
 int main(int argc, char *argv[])
 {
+	const char *filename;
+
 	if (argc != 2)
 	{
 		fprintf(stderr, "USAGE: monty file\n");
 		return (EXIT_FAILURE);
 	}
 
-	const char *filename = argv[1];
+	filename = argv[1];
 
 	parse_file(filename);
 
